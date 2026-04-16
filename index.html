@@ -197,30 +197,30 @@ next('page4');
 }
 
 /* =========================
-   ONLY CHANGED PART (MESSAGES)
+   ONLY FIXED: MESSAGES
 ========================= */
 function gen(reason){
 
 const data = {
 late: `Sir/Ma'am, I sincerely apologize for the late submission. I underestimated the time required and got delayed due to poor planning.
 
-[You can continue writing here if needed]`,
+[You can continue your message here]`,
 
 absent: `Sir/Ma'am, I was unable to attend due to unforeseen personal circumstances that affected my availability.
 
-[You can continue writing here if needed]`,
+[You can continue your message here]`,
 
 nosubmit: `Sir/Ma'am, I acknowledge that I failed to submit the requirement due to lack of proper time management.
 
-[You can continue writing here if needed]`,
+[You can continue your message here]`,
 
 lazy: `Sir/Ma'am, I honestly struggled with motivation and failed to complete the task on time.
 
-[You can continue writing here if needed]`,
+[You can continue your message here]`,
 
 group: `Sir/Ma'am, our group experienced coordination issues which affected our ability to complete the output properly.
 
-[You can continue writing here if needed]`
+[You can continue your message here]`
 };
 
 return data[reason];
@@ -278,4 +278,4 @@ next('page5');
 </script>
 
 </body>
-  </html>
+</html>
