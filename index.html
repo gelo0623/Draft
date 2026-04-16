@@ -13,6 +13,7 @@ color:white;
 overflow:hidden;
 }
 
+/* HERO TITLE */
 .hero-title{
 font-size:44px;
 font-weight:bold;
@@ -27,6 +28,7 @@ animation:pulse 1.2s infinite;
 100%{transform:scale(1);}
 }
 
+/* BACKGROUND CHAOS */
 .block{
 position:absolute;
 width:30px;
@@ -41,6 +43,7 @@ animation:fall 6s linear infinite;
 100%{transform:translateY(110vh) rotate(360deg);}
 }
 
+/* SCREEN SYSTEM */
 .screen{
 display:none;
 height:100vh;
@@ -51,6 +54,7 @@ flex-direction:column;
 
 .active{display:flex;}
 
+/* BOX */
 .box{
 background:#111827;
 padding:25px;
@@ -59,6 +63,7 @@ width:380px;
 text-align:center;
 }
 
+/* INPUTS */
 input,select{
 width:90%;
 padding:10px;
@@ -67,6 +72,7 @@ border:none;
 border-radius:8px;
 }
 
+/* BUTTONS */
 button{
 padding:12px;
 border:none;
@@ -78,21 +84,27 @@ margin:5px;
 animation:pulse 1.2s infinite;
 }
 
+/* RESULT */
 .result-box{
 background:#0f172a;
 padding:12px;
 border-radius:10px;
 margin:10px 0;
 text-align:left;
+font-size: 14px;
 }
 
+/* COPY */
 .copy-btn{
 background:#22c55e;
 padding:5px;
 font-size:12px;
 margin-top:5px;
+display:block;
+width: 100%;
 }
 
+/* MODAL */
 .modal{
 position:fixed;
 top:0;
@@ -107,17 +119,18 @@ align-items:center;
 
 .modal-box{
 background:linear-gradient(45deg,gold,orange);
+color:white;
 padding:25px;
 border-radius:15px;
 text-align:center;
 width:300px;
+box-shadow:0 0 20px gold;
 }
 </style>
 </head>
 
 <body>
 
-<!-- CHAOS BACKGROUND -->
 <script>
 for(let i=0;i<25;i++){
 let d=document.createElement("div");
@@ -128,40 +141,44 @@ document.body.appendChild(d);
 }
 </script>
 
-<!-- PAGE 1 -->
 <div id="page1" class="screen active">
 <div class="hero-title">EXCUSE GENERATOR 3000</div>
 <button onclick="next('page2')">START</button>
 </div>
 
-<!-- PAGE 2 -->
 <div id="page2" class="screen">
 <div class="box">
 <h2>Input Details</h2>
 <input id="name" placeholder="Your Name">
 <input id="teacher" placeholder="Teacher / Professor">
+
 <button onclick="next('page3')">Next</button>
+<button onclick="back('page2')">Back</button>
 </div>
 </div>
 
-<!-- PAGE 3 -->
-<div class="screen" id="page3">
+<div id="page3" class="screen">
 <div class="box">
-<h2>Type</h2>
+<h2>Type & Tone</h2>
 
 <select id="type">
 <option value="email">Email</option>
 <option value="message">Message</option>
 </select>
 
+<select id="tone" onchange="checkTone()">
+<option value="informal">Informal (Free)</option>
+<option value="formal">Formal (Premium 🔒)</option>
+</select>
+
 <button onclick="next('page4')">Next</button>
+<button onclick="back('page3')">Back</button>
 </div>
 </div>
 
-<!-- PAGE 4 -->
-<div class="screen" id="page4">
+<div id="page4" class="screen">
 <div class="box">
-<h2>Situation</h2>
+<h2>Select Situation</h2>
 
 <select id="reason">
 <option value="late">Late</option>
@@ -171,111 +188,132 @@ document.body.appendChild(d);
 <option value="group">Group Issue</option>
 </select>
 
-<button onclick="generate()">Generate</button>
+<button onclick="loading()">Generate</button>
+<button onclick="back('page4')">Back</button>
 </div>
 </div>
 
-<!-- RESULT -->
 <div id="page5" class="screen">
+<h2>Initializing Excuse...</h2>
+<p>Processing reality distortion…</p>
+</div>
+
+<div id="page6" class="screen">
 <div class="box">
-<h2>Result</h2>
-<div id="output"></div>
-<button onclick="back()">Back</button>
+<h2>Your Excuses</h2>
+<div id="output" style="max-height: 300px; overflow-y: auto;"></div>
+<button onclick="back('page6')">Back</button>
+</div>
+</div>
+
+<div class="modal" id="modal">
+<div class="modal-box">
+<h2>💰 PREMIUM REQUIRED</h2>
+<p>Unlock Formal Mode for $999</p>
+
+<button onclick="unlock()">Pay Now</button>
+<button onclick="closeModal()">Back</button>
 </div>
 </div>
 
 <script>
+let premium=false;
 
-/* NAV */
 function next(id){
 document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
 document.getElementById(id).classList.add('active');
 }
 
-function back(){
-next('page4');
+function back(id){
+const map={page2:"page1", page3:"page2", page4:"page3", page5:"page4", page6:"page4"};
+next(map[id]);
 }
 
-/* =========================
-   ONLY FIXED: MESSAGES
-========================= */
+function checkTone(){
+let tone=document.getElementById("tone").value;
+if(tone==="formal" && !premium){
+document.getElementById("modal").style.display="flex";
+document.getElementById("tone").value="informal";
+}
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+document.getElementById("tone").value="informal";
+}
+
+function unlock(){
+premium=true;
+document.getElementById("modal").style.display="none";
+document.getElementById("tone").value="formal";
+}
+
+/* CUSTOM EXCUSES */
 function gen(reason){
-
 const data = {
-late: `Sir/Ma'am, I sincerely apologize for the late submission. I underestimated the time required and got delayed due to poor planning.
-
-[You can continue your message here]`,
-
-absent: `Sir/Ma'am, I was unable to attend due to unforeseen personal circumstances that affected my availability.
-
-[You can continue your message here]`,
-
-nosubmit: `Sir/Ma'am, I acknowledge that I failed to submit the requirement due to lack of proper time management.
-
-[You can continue your message here]`,
-
-lazy: `Sir/Ma'am, I honestly struggled with motivation and failed to complete the task on time.
-
-[You can continue your message here]`,
-
-group: `Sir/Ma'am, our group experienced coordination issues which affected our ability to complete the output properly.
-
-[You can continue your message here]`
+    late: [
+        "My alarm clock failed to go off due to a software update.",
+        "I got stuck in unexpected traffic on my way here.",
+        "I had a minor household emergency that delayed my departure.",
+        "My car wouldn't start this morning.",
+        "I had trouble finding parking and had to walk a long distance."
+    ],
+    absent: [
+        "I'm feeling quite unwell today and need to rest.",
+        "I have an urgent family matter that requires my attention.",
+        "I am attending a necessary medical appointment.",
+        "My internet is down, preventing me from joining remotely.",
+        "I have a personal conflict that cannot be rescheduled."
+    ],
+    nosubmit: [
+        "I encountered a technical error while trying to upload the file.",
+        "I accidentally submitted the draft instead of the final version.",
+        "My computer crashed during the export process.",
+        "I was unable to access the submission portal due to errors.",
+        "I experienced a power outage that wiped my unsaved work."
+    ],
+    lazy: [
+        "I have been feeling completely burnt out lately.",
+        "I am struggling to find the motivation to focus on this task.",
+        "I have been overwhelmed with other academic priorities.",
+        "I am experiencing a severe case of writer's block.",
+        "I need a short break to reset my productivity levels."
+    ],
+    group: [
+        "Communication within the group has been challenging.",
+        "I have been waiting on contributions from other team members.",
+        "The project scope was unclear, leading to some confusion.",
+        "I have had to handle more than my share of the work.",
+        "Scheduling conflicts made it hard for us to collaborate effectively."
+    ]
 };
-
 return data[reason];
 }
 
-/* EMAIL FORMAT */
-function buildEmail(msg,name,teacher){
-return `
-Subject: Academic Requirement Submission
-
-To: ${teacher}
-
-Good day,
-
-I hope this message finds you well.
-
---------------------------------------------------
-
-${msg}
-
---------------------------------------------------
-
-Respectfully,
-${name}
-`;
-}
-
-/* MESSAGE FORMAT */
-function buildMessage(msg){
-return msg;
-}
-
-/* GENERATE */
-function generate(){
-
-let name=document.getElementById("name").value || "Student";
-let teacher=document.getElementById("teacher").value || "Sir/Ma'am";
-let type=document.getElementById("type").value;
-let reason=document.getElementById("reason").value;
-
-let msg = gen(reason);
-
-let output="";
-
-if(type==="email"){
-output = buildEmail(msg,name,teacher);
-}else{
-output = buildMessage(msg);
-}
-
-document.getElementById("output").innerText=output;
+function loading(){
 next('page5');
+setTimeout(()=>{
+generate();
+next('page6');
+},1500);
 }
 
+function generate(){
+let reason=document.getElementById("reason").value;
+let list=gen(reason);
+let html="";
+list.forEach(e=>{
+html+=`<div class="result-box">${e}<button class="copy-btn" onclick="copy('${e.replace(/'/g, "\\'")}')">Copy</button></div>`;
+});
+document.getElementById("output").innerHTML=html;
+}
+
+function copy(text){
+navigator.clipboard.writeText(text);
+alert("Copied: " + text);
+}
 </script>
 
 </body>
 </html>
+
